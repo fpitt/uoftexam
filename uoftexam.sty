@@ -1,8 +1,8 @@
 % Title:    LaTeX Style File for UofT Final Exam
 %           University of Toronto, Faculty of Art & Sciences
-% Version: 1.21
+% Version: 1.22
 % Author:  Kaveh Ghasemloo
-% Date:    Nov. 26, 2013
+% Date:    Nov. 27, 2013
 %
 % Licence: 
 % This work is licensed under the 
@@ -15,8 +15,8 @@
 
 %\ifx\uoftexamversion\undefined
 
-\def\uoftexamdate{2013/11/26}
-\def\uoftexamversion{v1.21}
+\def\uoftexamdate{2013/11/27}
+\def\uoftexamversion{v1.22}
 \ProvidesPackage{uoftexam}[\uoftexamdate\space \uoftexamversion\space
 UofT Examination Style]
 \edef\uoftexaminfo{%
@@ -198,40 +198,67 @@ Location on CTAN: ^^J
 \newcommand{\ExamAids}[1]{\def\@ExamAids{{#1}}}
 \newcommand{\ExamInstructions}[1]{\def\@ExamInstructions{#1}}
 
+\def\tand{&}
+\newcounter{iquestion}
+%----------------------------------------------------------------
+% old score table
+%\newcommand{\scoretable}[1]{
+%\def\@tscoretable{%
+%\begin{tabular}{|c|c@{/}c|}%
+%\hline%
+%Question \# & Score & Points\\%
+%\hline%
+%#1%
+%\hline%
+%Total & & \TotalScore{}\\%
+%\hline%
+%\end{tabular}%
+%}
+%\let\@scoretable=\@tscoretable
+%}
 
-\newcommand{\scoretable}[1]{
-\def\@tscoretable{\ifthenelse{0<\readval{lastquestion}}{
+%\scoretable{%
+%  \setcounter{iquestion}{1}%
+%  \whiledo{\theiquestion<\readval{lastquestion}}{%
+%    \ref{question:Q\theiquestion} % 
+%    \ifutx@questionnames%
+%      \readval{QN\theiquestion}% 
+%    \fi%
+%    \tand ~ \tand \readval{Q\theiquestion}\\%
+%    \stepcounter{iquestion}%
+%  }%
+%    \ref{question:Q\theiquestion} %
+%    \tand ~ \tand \readval{Q\theiquestion}\\
+%}
+
+%----------------------------------------------------------------
+% new score table
+\newcommand{\newscoretable}[0]{
+\ifthenelse{0<\pageref{page:last}}{
 \begin{tabular}{|c|c@{/}c|}%
 \hline%
 Question \# & Score & Points\\%
 \hline%
-#1%
-\hline%
-Total & & \TotalScore{}\\%
-\hline%
-\end{tabular}%
-}{}}
-\let\@scoretable=\@tscoretable
-}
-
-
-\def\tand{&}
-\newcounter{iquestion}
-\scoretable{%
   \setcounter{iquestion}{1}%
   \whiledo{\theiquestion<\readval{lastquestion}}{%
     \ref{question:Q\theiquestion} % 
     \ifutx@questionnames%
-      \protect\readval{QN\theiquestion}% 
+      \readval{QN\theiquestion}% 
     \fi%
-    \tand ~ \tand \protect\readval{Q\theiquestion}\\%
+    \tand ~ \tand \readval{Q\theiquestion}\\%
     \stepcounter{iquestion}%
   }%
     \ref{question:Q\theiquestion} %
-    \tand ~ \tand \protect\readval{Q\theiquestion}\\
+    \tand ~ \tand \readval{Q\theiquestion}\\
+\hline%
+Total & & \TotalScore{}\\%
+\hline%
+\end{tabular}%
+}{}
 }
 
-
+%----------------------------------------------------------------
+% question table
 \newsavebox\mybox
 \sbox{\mybox}{{\tiny 00}}
 
@@ -279,9 +306,9 @@ Total & & \TotalScore{}\\%
 %\newcommand{\QuestionCount}[1]{\def\@QuestionCount}{{#1]}}
 %\newcommand{\TotalScore}[1]{\def\@TotalScore}{{#1}}}
 
-\def\QuestionCount{\protect\readval{totalquestion}}
-\def\TotalScore{\protect\readval{totalscore}}
-\def\TotalScratchPages{\protect\readval{totalscratchpages}}
+\def\QuestionCount{\readval{totalquestion}}
+\def\TotalScore{\readval{totalscore}}
+\def\TotalScratchPages{\readval{totalscratchpages}}
 
 
 %----------------------------------------------------------------
@@ -432,7 +459,6 @@ to the attention of an invigilator.
 
 %----------------------------------------------------------------
 \newcommand{\toppage}{%
-%\def\@uoftexamstate{toppage}
 \ifutx@lecturenote%
 \LectureTopPage%
 \else%
@@ -624,7 +650,7 @@ Last Name: \hspace{.31in} \hrulefill\ \hspace{0.4in} \\
 The section below is for marker's use only.
 Do NOT use it for answering or as scratch paper.\\
 
-\@scoretable%
+{\newscoretable}
 
 \vfill
 
@@ -668,7 +694,7 @@ Do NOT use it for answering or as scratch paper.\\
 \item[\thequestioncount.] {\bf {#2}}%
 %
 \IfStrEq{#1}{.}{%
-\displayquestionscore{[\protect\readval{Q\thequestioncount}]}%
+\displayquestionscore{[\readval{Q\thequestioncount}]}%
 }{%
 \displayquestionscore{#1}%
 }%
