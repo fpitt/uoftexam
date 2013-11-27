@@ -1,0 +1,1184 @@
+% Title:    LaTeX Style File for UofT Final Exam
+%           University of Toronto, Faculty of Art & Sciences
+% Version: 1.21
+% Author:  Kaveh Ghasemloo
+% Date:    Nov. 26, 2013
+%
+% Licence: 
+% This work is licensed under the 
+% Creative Commons Attribution-ShareAlike 3.0 Unported License. 
+% To view a copy of this license, visit 
+%   http://creativecommons.org/licenses/by-sa/3.0/ 
+% or send a letter to 
+%   Creative Commons, 444 Castro Street, Suite 900, 
+%   Mountain View, California, 94041, USA.
+
+%\ifx\uoftexamversion\undefined
+
+\def\uoftexamdate{2013/11/26}
+\def\uoftexamversion{v1.21}
+\ProvidesPackage{uoftexam}[\uoftexamdate\space \uoftexamversion\space
+UofT Examination Style]
+\edef\uoftexaminfo{%
+----------------------------------------------------------------^^J
+UofT Exam Package <\uoftexamdate> <\uoftexamversion>  ^^J
+%
+Description: ^^J
+\space\space University of Toronto exam and assignment typesetting ^^J
+%
+Author: ^^J
+\space\space Kaveh Ghasemloo^^J
+%
+License: ^^J
+\space\space This work is licensed under the ^^J
+\space\space Creative Commons Attribution-ShareAlike 3.0 Unported License.^^J 
+\space\space To view a copy of this license, visit ^^J
+\space\space\space\space  http://creativecommons.org/licenses/by-sa/3.0/ ^^J
+\space\space or send a letter to ^^J
+\space\space\space\space Creative Commons, 444 Castro Street, Suite 900, ^^J 
+\space\space\space\space Mountain View, California, 94041, USA^^J
+%
+Location on CTAN: ^^J
+\space\space NA^^J
+----------------------------------------------------------------}
+\typeout{\uoftexaminfo}
+
+
+%----------------------------------------------------------------
+% packages used
+\RequirePackage{fancyhdr}
+\RequirePackage{ifthen}
+\RequirePackage{marginnote}
+\RequirePackage{xstring}
+\RequirePackage{xcolor}
+
+\RequirePackage[utf8]{inputenc} 
+\RequirePackage[T1]{fontenc}
+\RequirePackage{lmodern}
+\RequirePackage{microtype}
+
+%\RequirePackage{ifdraft}
+%\RequirePackage{amssymb,amsmath}
+%\RequirePackage{enumerate}
+%\RequirePackage{cm}
+%\RequirePackage{longtable}
+%\RequirePackage{calc}
+
+
+
+%----------------------------------------------------------------
+% package options: exam, infopage, questions, solutions, writeon, assignment
+%   writeon and solutions should not be used together
+%   exam implies infopage and questions
+%   solutions implies questions
+% useful combinations: 
+%   {exam}, {exam,writeon}, {questions}, {solutions}, {assignment}, 
+%   {assignment,solutions}, {assignment,remarks}
+
+\newif\ifutx@exam
+\DeclareOption{exam}{
+\utx@examtrue
+\utx@studentinfopagetrue
+\utx@questionstrue
+%\utx@writeontrue
+}
+
+\newif\ifutx@studentinfopage
+\DeclareOption{infopage}{
+\utx@studentinfopagetrue
+}
+
+\newif\ifutx@questions
+\DeclareOption{questions}{
+\utx@questionstrue
+}
+
+\newif\ifutx@solutions
+\DeclareOption{solutions}{
+\utx@questionstrue
+\utx@solutionstrue
+}
+
+\DeclareOption{solutionsonly}{
+\utx@solutionstrue
+}
+
+\newif\ifutx@explicitnewpage
+\DeclareOption{explicitnewpage}{
+\utx@explicitnewpagetrue
+}
+
+\newif\ifutx@writeon
+\DeclareOption{writeon}{
+\utx@writeontrue
+}
+
+\newif\ifutx@assignment
+\DeclareOption{assignment}{
+\utx@assignmenttrue
+}
+
+\newif\ifutx@remarks
+\DeclareOption{remarks}{
+\utx@remarkstrue
+}
+
+\newif\ifutx@lecturenote
+\DeclareOption{lecturenote}{
+\utx@lecturenotetrue
+}
+
+\newif\ifutx@questionnames
+\DeclareOption{questionnames}{
+\utx@questionnamestrue
+}
+
+
+\newif\ifutx@questiontable
+\DeclareOption{questiontable}{
+\utx@questiontabletrue
+}
+
+\newif\ifutx@papernumber
+\DeclareOption{papernumber}{
+\utx@papernumbertrue
+}
+
+\utx@studentinfopagefalse
+\utx@questionsfalse
+\utx@solutionsfalse
+\utx@writeonfalse
+\utx@examfalse
+\utx@assignmentfalse
+\utx@remarksfalse
+\utx@lecturenotefalse
+\utx@explicitnewpagefalse
+\utx@questiontablefalse
+\utx@papernumberfalse
+
+\ProcessOptions
+
+%----------------------------------------------------------------
+%  the counters count the points and output the score table and question count automatically
+\newcounter{scorecount}
+\setcounter{scorecount}{0}
+\newcounter{questioncount}
+\setcounter{questioncount}{0}
+\newcounter{questioncountpart}
+\newcounter{solutioncountpart}
+\newcounter{qscorecount}
+
+
+
+%----------------------------------------------------------------
+% exam info setup commands
+
+\newcommand{\InstitutionName}[1]{\def\@InstitutionName{{#1}}}
+\newcommand{\FacultyName}[1]{\def\@FacultyName{{#1}}}
+\newcommand{\DepartmentName}[1]{\def\@DepartmentName{{#1}}}
+
+\newcommand{\CourseTitle}[1]{\def\@CourseTitle{{#1}}}
+\newcommand{\CourseCode}[1]{\def\@CourseCode{{#1}}}
+\newcommand{\CourseSemester}[1]{\def\@CourseSemester{{#1}}}
+\newcommand{\CourseSemesterCode}[1]{\def\@CourseSemesterCode{{#1}}}
+\newcommand{\CourseSection}[1]{\def\@CourseSection{{#1}}}
+\newcommand{\CourseInstructor}[1]{\def\@CourseInstructor{{#1}}}
+
+\newcommand{\Date}[1]{\def\@Date{{#1}}}
+
+\newcommand{\Title}[1]{\def\@Title{{#1}}}
+\newcommand{\AssignmentScore}[1]{\def\@AssignmentScore{{#1}}}
+\newcommand{\AssignmentDueDate}[1]{\def\@AssignmentDueDate{{#1}}}
+\newcommand{\AssignmentInstructions}[1]{\def\@AssignmentInstructions{{#1}}}
+
+\newcommand{\MarkerName}[1]{\def\@MarkerName{{#1}}}
+%\newcommand{\}{\def\@{{#1}}}
+
+\newcommand{\ExamDuration}[1]{\def\@ExamDuration{{#1}}}
+\newcommand{\ExamAids}[1]{\def\@ExamAids{{#1}}}
+\newcommand{\ExamInstructions}[1]{\def\@ExamInstructions{#1}}
+
+
+\newcommand{\scoretable}[1]{
+\def\@tscoretable{\ifthenelse{0<\readval{lastquestion}}{
+\begin{tabular}{|c|c@{/}c|}%
+\hline%
+Question \# & Score & Points\\%
+\hline%
+#1%
+\hline%
+Total & & \TotalScore{}\\%
+\hline%
+\end{tabular}%
+}{}}
+\let\@scoretable=\@tscoretable
+}
+
+
+\def\tand{&}
+\newcounter{iquestion}
+\scoretable{%
+  \setcounter{iquestion}{1}%
+  \whiledo{\theiquestion<\readval{lastquestion}}{%
+    \ref{question:Q\theiquestion} % 
+    \ifutx@questionnames%
+      \protect\readval{QN\theiquestion}% 
+    \fi%
+    \tand ~ \tand \protect\readval{Q\theiquestion}\\%
+    \stepcounter{iquestion}%
+  }%
+    \ref{question:Q\theiquestion} %
+    \tand ~ \tand \protect\readval{Q\theiquestion}\\
+}
+
+
+\newsavebox\mybox
+\sbox{\mybox}{{\tiny 00}}
+
+\newcommand{\questiontable}[0]{%
+{\small%
+\ifthenelse{0<\readval{lastquestion}}{
+\begin{tabular}{|*{\readval{lastquestion}}{c|}}
+\hline
+  \setcounter{iquestion}{1}%
+  \whiledo{\theiquestion<\readval{lastquestion}}{%
+    {\tiny \theiquestion} % 
+    \tand %
+    \stepcounter{iquestion}%
+  }%
+  {\tiny \theiquestion}\\%
+  \hline %
+  \setcounter{iquestion}{1}%
+  \whiledo{\theiquestion<\readval{lastquestion}}{%
+    \rule{\wd\mybox}{0pt}% 
+    \tand %
+    \stepcounter{iquestion}%
+  }%
+  \\%
+  \hline%
+\end{tabular}%
+}{}%
+}}
+
+
+
+\newcommand{\generalnotes}[2]{
+\def\@generalnotes{{
+\begin{center}
+{\bf {#1}}
+\end{center}
+%\noindent\hrulefill \\
+{\small{#2}}
+}}
+}
+
+\newcommand{\solutioncolor}[1]{
+\def\@solutioncolor{#1}
+}
+
+%\newcommand{\QuestionCount}[1]{\def\@QuestionCount}{{#1]}}
+%\newcommand{\TotalScore}[1]{\def\@TotalScore}{{#1}}}
+
+\def\QuestionCount{\protect\readval{totalquestion}}
+\def\TotalScore{\protect\readval{totalscore}}
+\def\TotalScratchPages{\protect\readval{totalscratchpages}}
+
+
+%----------------------------------------------------------------
+% set the default values for the course info
+
+\InstitutionName{UNIVERSITY OF TORONTO}
+\FacultyName{Faculty of Arts and Science}
+\DepartmentName{Department of Computer Science}
+
+\CourseTitle{Course Title}
+\CourseCode{Course Code}
+\CourseSemester{Course Semester}
+\CourseSemesterCode{Course Semester Code}
+\CourseSection{Course Section}
+\CourseInstructor{Course Instructor}
+
+\Date{Date} %{December 2012}
+\Title{Title}
+
+\AssignmentScore{Assignment Score}
+\AssignmentDueDate{Assignment Due Date}
+\AssignmentInstructions{Assignment Instruction}
+
+\MarkerName{Marker Name}
+
+\ExamDuration{Exam Duration} %{3 hours} {2 hours}
+\ExamAids{Exam Aids} %{No Aids Allowed}
+\ExamInstructions{Exam Instructions}
+
+\ExamInstructions{
+There are \QuestionCount~questions worth a total of \TotalScore~points. 
+Answer all questions on the question paper. 
+{\bf Check that your exam book has \pageref{page:last} pages}
+(including this cover page). 
+Please bring any discrepancy
+to the attention of an invigilator.
+}
+
+%\generalnotes{}{}
+
+\solutioncolor{black}
+
+
+%----------------------------------------------------------------
+% page geometry, header and footer
+
+\setlength{\textwidth}{7in}
+\setlength{\textheight}{9.25in}
+
+\setlength{\topmargin}{-0.575in}
+\setlength{\oddsidemargin}{-.25in}
+\setlength{\evensidemargin}{-.25in}
+\setlength{\headheight}{15pt}
+
+\pagestyle{fancy}
+\lhead[]{}
+\chead[]{}
+\rhead[]{}
+\lfoot[]{}
+\cfoot[]{}
+\rfoot[]{} 
+%\rfoot[Page \thepage/\pageref{page:last}]{Page \thepage/\pageref{page:last}}
+\fancyfoot[RO,LE]{{Page \thepage/\pageref{page:last}}}
+\fancyfoot[CO,CE]{{%
+\ifutx@lecturenote\else%
+\ifutx@assignment\else%
+  \ifthenelse{\value{page}=\pageref{page:last}}%
+  {Total Marks = (\thescorecount) Total Pages = (\pageref{page:last})}%
+  {}%
+  \ifthenelse{\value{page}=\pageref{page:first}}{%
+  \ifutx@questiontable{\questiontable}\else\fi%
+  }{}%
+\fi%
+\fi%
+}} %{\studentnumberboxes}
+
+\fancyfoot[LO,RE]{{%
+  \ifthenelse{\value{page}=\pageref{page:first} \or %
+    \value{page}=\pageref{page:firstquestion}}{%
+  \ifutx@writeon\ifutx@papernumber %
+    \papernumber %
+  \fi\fi %
+  }{}%
+}}
+
+\fancyhead[L]{{
+  \ifthenelse{\value{page}=\pageref{page:first}}{}{
+    \tiny
+    \@InstitutionName
+  }
+}}
+
+\fancyhead[C]{{
+  \ifthenelse{\value{page}=\pageref{page:first}}{}{
+    \tiny
+    \@CourseCode\@CourseSemesterCode\@CourseSection
+  }
+}}
+
+\fancyhead[R]{{
+  \ifthenelse{\value{page}=\pageref{page:first}}{}{{%
+    \tiny
+    \@Date
+  }}%
+}}
+
+
+
+
+%----------------------------------------------------------------
+% Macros for drawing "underline" rules and half-boxes.
+\newcommand{\urule}[2][.5pt]{\rule[-2pt]{#2}{#1}} % "underline" rule
+\newcommand{\hb}{\urule{1.5em}}                   % horizontal bar
+\newcommand{\vb}{\urule[1ex]{.5pt}}               % vertical bar
+
+\newcounter{itemp}
+\newcommand{\studentnumberbox}[1]{%
+\setcounter{itemp}{0}%
+\whiledo{\theitemp<#1}{%
+  \vb\hb%
+  \stepcounter{itemp}%
+}%
+\vb%
+}
+
+\newcommand{\studentnumberboxes}{%
+  \studentnumberbox{10}%
+}
+
+\newcommand{\papernumber}[0]{{\small
+\papernumberhelper{4}%
+}}
+
+\newcommand{\papernumberhelper}[1]{%
+\begin{tabular}{|*{#1}{c}|}%
+\hline
+\multicolumn{#1}{|c|}{\tiny Marking Code}\\
+\hline%
+\setcounter{itemp}{1}%
+\whiledo{\theitemp<#1}{%
+  \tand %
+  \stepcounter{itemp}%
+}\\%
+\hline%
+\end{tabular}
+}
+
+
+%----------------------------------------------------------------
+\newcommand{\toppage}{%
+%\def\@uoftexamstate{toppage}
+\ifutx@lecturenote%
+\LectureTopPage%
+\else%
+\ifutx@assignment%
+\AssignmentTopPage%
+\else%
+\ExamTopPage%
+\fi%
+\fi%
+\newexampage%
+\label{page:firstquestion}%
+}
+
+%----------------------------------------------------------------
+\newcommand{\ExamTopPage}{{%
+\label{page:first}%
+%
+\infopage%
+%
+\ifutx@studentinfopage%
+  \newpage%
+  \markingpage%
+\fi%
+%
+\ifx\@generalnotes\undefined\else%
+  \ifutx@writeon\else%
+    \vspace{.2in}%
+  \fi%
+  \@generalnotes%
+\fi%
+%
+% if the infopage is on, the writeon is off, and 
+% questions/solutions are on, then start a new page
+\ifutx@studentinfopage\ifutx@writeon\else%
+\ifutx@questions\newpage\else\ifutx@solutions\newpage\fi\fi%
+\fi\fi%
+}}
+
+
+
+%----------------------------------------------------------------
+\newcommand{\LectureTopPage}{{
+\label{page:first}%
+~\vspace{-.8in}\\
+
+\begin{center}{{\bf
+\@InstitutionName \\ 
+\@FacultyName \\ 
+\@CourseCode\@CourseSemesterCode\@CourseSection~\@Date \\
+}
+\vspace{.1in}%
+
+\@Title \\
+% if the instructor and the section are defined
+\ifx\@CourseInstructor\undefined\else%
+~by \@CourseInstructor \\%
+\fi%
+}\end{center}
+
+\vspace{.2in}
+}}
+
+
+%----------------------------------------------------------------
+\newcommand{\AssignmentTopPage}{{
+\label{page:first}%
+~\vspace{-.8in}\\
+\begin{center}{\bf
+\@CourseCode\@CourseSemesterCode\@CourseSection~\@Date \hfill
+\@Title\\ }
+Due: \@AssignmentDueDate \hfill 
+Total~Score: \@AssignmentScore~points
+\end{center}
+
+\vspace{.2in}
+
+\ifutx@solutions\else\ifutx@remarks\else\ifutx@questions
+\@AssignmentInstructions
+\fi\fi\fi
+
+\begin{center}{\bf
+\ifutx@solutions
+Solutions
+\else
+\ifutx@remarks
+Remarks
+\else
+\ifutx@questions
+Questions
+\fi
+\fi
+\fi
+}\end{center}
+}}
+
+
+%----------------------------------------------------------------
+\newcommand{\infopage}{
+\begin{center}{\bf
+
+\@InstitutionName~\\ 
+\@FacultyName~\\ 
+
+\vspace{.1in}
+
+\@Date~\@Title\\
+
+\vspace{.1in}
+
+\@CourseCode\@CourseSemesterCode%
+% if the section is defined
+\ifx\@CourseSection\undefined\else%
+~\@CourseSection%
+\fi%
+~\\
+
+% if it is not exam
+\ifutx@exam\else
+% if it is solutions
+\ifutx@solutions
+\vspace{.1in}
+Solutions
+% if it is not solutions but is questions
+\else\ifutx@remarks
+\vspace{.1in}
+Remarks
+% if it is not solutions but is questions
+\else\ifutx@questions
+\vspace{.1in}
+Questions
+\fi
+\fi
+\fi
+\fi
+
+% if the instructor and the section are defined
+\ifx\@CourseInstructor\undefined\else%
+\vspace{.1in}%
+\@CourseInstructor~\\%
+\fi%
+
+\vspace{.1in}
+
+Duration - \@ExamDuration~\\
+
+\vspace{.1in}
+
+\@ExamAids~\\
+
+\vspace{.1in}
+}\end{center}
+
+\ifutx@studentinfopage
+\vspace{.1in}
+
+PLEASE COMPLETE THE SECTION BELOW AND THE SECTION BEHIND THIS PAGE:
+
+\vspace{.2in}
+
+First Name: \hspace{.28in} \hrulefill\ \hspace{.4in}\\
+
+Last Name: \hspace{.31in} \hrulefill\ \hspace{.4in}\\
+
+\fi
+
+\vspace{.2in}
+
+\@ExamInstructions~\\
+}
+
+
+
+
+%----------------------------------------------------------------
+% marking page
+\newcommand{\markingpage}{{
+PLEASE PRINT YOUR STUDENT NUMBER AND YOUR NAME \\
+
+Student Number: \studentnumberboxes \\
+
+First Name: \hspace{.28in} \hrulefill\ \hspace{0.4in} \\
+
+Last Name: \hspace{.31in} \hrulefill\ \hspace{0.4in} \\
+
+\vspace{.1in}
+
+\noindent\hrulefill \\
+
+The section below is for marker's use only.
+Do NOT use it for answering or as scratch paper.\\
+
+\@scoretable%
+
+\vfill
+
+%\noindent\hrulefill\\
+}}
+
+
+%----------------------------------------------------------------
+% new question
+\newcommand{\newsection}[1]{{%
+\item []%
+\begin{center}%
+{\bf \Large {#1}}%
+\end{center}%
+}}
+
+%----------------------------------------------------------------
+% new question
+\newcommand{\newquestionn}[3]{{%
+% add one to the question counter
+%\addtocounter{questioncount}{1}%
+\refstepcounter{questioncount}%
+\label{question:Q\thequestioncount}
+%
+% set the question part number to zero.
+\setcounter{questioncountpart}{0}%
+%
+% set the question points counter to zero.
+\setcounter{qscorecount}{0}%
+%
+% if it is exam, start a new page for the question.
+\ifutx@writeon\ifutx@explicitnewpage\else%
+  \newpage%
+\fi\else%
+  \vspace{.1in}%
+%  \hrulefill 
+\fi%
+%
+%
+\ifutx@questions%
+\item[\thequestioncount.] {\bf {#2}}%
+%
+\IfStrEq{#1}{.}{%
+\displayquestionscore{[\protect\readval{Q\thequestioncount}]}%
+}{%
+\displayquestionscore{#1}%
+}%
+%
+\ifutx@solutions%
+{%
+\ifthenelse{\equal{#2}{}}{}{\newline}%
+\bf Question: }%
+\else%
+%{\bf Q}%
+\fi%
+%
+{#3}%
+\else%
+% ????
+\ifutx@solutions\else\item [~]~\fi%
+\fi%
+%
+% set the question score to be #1.
+\def\firstparm{#1}%
+\let\questionscore=\firstparm%
+%
+% if #1 is the empty string and there are parts with scores
+% set the question score to be the total score of parts.
+\IfStrEq{#1}{}{%
+  \ifnum\theqscorecount>0%
+    \let\questionscore=\theqscorecount%
+  \fi%
+}{%
+\IfStrEq{#1}{.}{%
+  \ifnum\theqscorecount>0%
+    \let\questionscore=\theqscorecount%
+  \fi%
+}{}%
+}%
+%
+% if it is the top level of enumeration, and 
+% the question score is a number, then add it to the total score of the exam.
+\ifnum\@enumdepth = 1%
+\IfInteger{\questionscore}{%
+% add the question's score to scorecount 
+  \addtocounter{scorecount}{\questionscore}%
+}{}%
+\fi%
+%\typeout{Debug: Q\thequestioncount\space #1, % 
+%  \thescorecount, \theqscorecount, \questionscore   }%
+%
+\ifnum\@enumdepth = 1%
+% write a label and number of points for the question to AUX
+  \writeval{Q\thequestioncount}{\questionscore}
+  \writeval{QN\thequestioncount}{#2}%
+\fi%
+}}
+
+%----------------------------------------------------------------
+% new question
+% backward compatibility
+\newcommand{\newquestion}[2]{{%
+\newquestionn{#1}{}{{#2}}%
+}}
+
+%----------------------------------------------------------------
+% new question, without starting a new page
+% for putting multiple questions on the same page
+% when doing a writeon exam.
+% backward compatibility
+\newcommand{\newquestions}[2]{{%
+\ifutx@explicitnewpage%
+\newquestion{#1}{#2}%
+\else
+\utx@explicitnewpagetrue%
+\newquestion{#1}{#2}%
+\utx@explicitnewpagefalse%
+\fi
+}}
+
+%----------------------------------------------------------------
+% new question, without starting a new page
+% for putting multiple questions on the same page
+% when doing a writeon exam.
+\newcommand{\newquestionsn}[3]{{%
+\ifutx@explicitnewpage%
+\newquestionn{#1}{#2}{#3}%
+\else
+\utx@explicitnewpagetrue%
+\newquestionn{#1}{#2}{#3}%
+\utx@explicitnewpagefalse%
+\fi
+}}
+
+%----------------------------------------------------------------
+% new question part
+\newcommand{\newquestionpart}[2]{{%
+\ifnum\@enumdepth = 2%
+%
+\addtocounter{questioncountpart}{1}%
+%
+\ifutx@solutions%
+\item [\alph{questioncountpart}.]{\bf }%
+\else%
+\item [\alph{questioncountpart}.]%
+\fi%
+\displayquestionscore{#1}%
+{#2}%
+%
+%
+% if #1 is a number, add it to the question score.
+\IfInteger{#1}{%
+  \addtocounter{qscorecount}{#1}%
+}{}%
+\fi%
+}}
+
+
+
+%----------------------------------------------------------------
+% new question part with custom number
+\newcommand{\newquestionpartn}[3]{{%
+\ifnum\@enumdepth = 2%
+%
+%\addtocounter{questioncountpart}{1}%
+%
+\ifutx@solutions%
+\item [#2]{\bf }%
+\else%
+\item [#2]%
+\fi%
+\displayquestionscore{#1}%
+{#3}%
+%
+%
+% if #1 is a number, add it to the question score.
+\IfInteger{#1}{%
+  \addtocounter{qscorecount}{#1}%
+}{}%
+\fi%
+}}
+
+
+%----------------------------------------------------------------
+% padding for answer, old version, kept for compatibility
+\newcommand{\answerpadding}[0]{{
+\ifutx@writeon%
+  \newpadding{1}%
+\fi%
+}}
+
+
+
+
+%----------------------------------------------------------------
+% I don't know rule
+\newcommand{\idontknowrule}[0]{{
+{\bf If you do not know the answer to this question,
+you can leave it blank {\it and} 
+you write \textquotedblleft{\sc I don't know.}\textquotedblright 
+to you receive 20 percent of the points.}
+}}
+
+
+
+
+%----------------------------------------------------------------
+% padding for answer
+\newcounter{ipadding}
+\newcommand{\newpadding}[1]{{%
+\ifutx@writeon%
+  \setcounter{ipadding}{0}%
+  \whiledo{\theipadding<#1}{%
+    \vspace*{\fill}%
+    \stepcounter{ipadding}%
+  }%
+\fi%
+}}
+
+
+
+
+%----------------------------------------------------------------
+% sets the size of fixed padding
+\newcommand{\setpadsize}[1]{%
+\def\@padsize{#1}
+}
+
+% set the defaut value
+\setpadsize{1cm}
+
+% fixed padding for answer
+\newcommand{\newfixedpadding}[1]{{%
+\ifutx@writeon%
+  \setcounter{ipadding}{0}%
+  \whiledo{\theipadding<#1}{%
+    \vspace{\@padsize}
+    \stepcounter{ipadding}%
+  }%
+\fi%
+}}
+
+
+
+
+%----------------------------------------------------------------
+% internal command used to display question score
+\newcommand{\displayquestionscore}[1]{%
+\IfInteger{#1}{\IfStrEq{#1}{}{}{%
+\marginnote{[{#1}]}%
+% marginnote causes the text to shift to right, to fix it we do
+\hspace{-3pt}%
+}}{%
+\marginnote{{#1}}%
+% marginnote causes the text to shift to right, to fix it we do
+\hspace{-3pt}%
+}%
+}
+
+
+
+
+%----------------------------------------------------------------
+% new question page
+\newcommand{\newexampage}{{
+\ifutx@writeon%
+\newpage
+\fi%
+}}
+
+
+
+
+%----------------------------------------------------------------
+% new question page
+\newcommand{\newquestionpage}{{
+\ifutx@writeon%
+\vfill
+\begin{center}
+The question continues on the next page.
+\end{center}
+\newpage
+\begin{center}
+The question continues here.
+\end{center}
+\fi%
+}}
+
+
+
+
+%----------------------------------------------------------------
+% new answer page
+\newcommand{\newanswerpage}{{%
+\ifutx@writeon%
+\vfill
+\begin{center}
+You may continue your solution on the next page.
+\end{center}
+\newpage
+\begin{center}
+Continue your solution here.
+\end{center}
+\vfill
+\fi%
+}}
+
+
+
+
+%----------------------------------------------------------------
+% new scratch page, for rough work only
+\newcounter{iscratchpage}
+\setcounter{iscratchpage}{0}
+\newcommand{\newscratchpage}[1]{{%
+\ifutx@writeon%
+%  \vfill%
+%  \begin{center}%
+%  {Last exam page.}%
+%  \end{center}%
+  \stepcounter{iscratchpage}%
+  \whiledo{\theiscratchpage<#1}{%
+    \newpage%
+    \begin{center}%
+    {This page is for rough work only, it will {\bf not} be graded.}%
+    \end{center}%
+    \vfill%
+    \begin{center}%
+    {More space for rough work is available on the next page.}%
+    \end{center}
+    \stepcounter{iscratchpage}%
+  }%
+  \newpage%
+  \begin{center}%
+  {This page is for rough work only, it will {\bf not} be graded.}%
+  \end{center}%
+\fi%
+}}
+
+
+
+
+%----------------------------------------------------------------
+% solution to a question or a question part
+\newcommand{\newsolution}[1]{{%
+\ifutx@solutions%
+%\ifutx@questions%
+%\begin{description}%
+%\item[{\bf Solution:}]%
+%{#1}
+%\end{description}%
+%\else%
+%
+\setcounter{solutioncountpart}{0}%
+%
+\def\@solutionindex{}%
+\ifnum\@enumdepth = 1%
+\def\@solutionindex{\thequestioncount.}%
+\else\ifnum\@enumdepth = 2%
+\def\@solutionindex{\alph{questioncountpart}.}%
+\fi\fi%
+\ifutx@questions%
+\def\@solutionindex{}%
+\fi%
+%
+\item[\@solutionindex] {\color{\@solutioncolor}{\bf Solution:}%
+#1%
+}%
+\fi%
+}}
+
+\newcommand{\solution}[1]{\newsolution{#1}}
+
+
+%----------------------------------------------------------------
+% new solution part
+\newcommand{\newsolutionpart}[1]{{%
+\ifnum\@enumdepth = 2%
+%
+\addtocounter{solutioncountpart}{1}%
+%
+\item [\alph{solutioncountpart}.]{\bf }%
+{#1}%
+%
+\fi%
+}}
+
+
+\newcommand{\hint}[1]{{%
+\ifutx@questions%
+{\bf Hint:}%
+{#1}
+\fi%
+}}
+
+\newcommand{\remarks}[1]{{%
+\ifutx@remarks%
+%
+\def\@remarkindex{}%
+\ifnum\@enumdepth = 1%
+\def\@remarkindex{\thequestioncount.}%
+\else\ifnum\@enumdepth = 2%
+\def\@remarkindex{\alph{questioncountpart}.}%
+\fi\fi%
+%
+\ifutx@questions%
+\def\@remarkindex{}%
+\fi%
+%
+\ifutx@solutions%
+\def\@remarkindex{}%
+\fi%
+%
+\item[\@remarkindex] {\bf Remarks:}%
+{#1}
+\fi%
+}}
+
+
+%----------------------------------------------------------------
+%
+\newcommand{\newevenside}{
+        \ifthenelse{\isodd{\thepage}}{\newpage}{
+        \newpage
+        \phantom{placeholder} % doesn't appear on page
+        \thispagestyle{empty} % if want no header/footer
+        \newpage
+        }
+}
+
+
+
+
+%----------------------------------------------------------------
+% this pages is the last page of the test
+% you can edit (e.g. to leave the last page blank)
+\newcommand{\bottompage}{{%
+%\newpage
+%\begin{center}
+%\vfill 
+%PLEASE LEAVE THIS PAGE EMPTY \\
+%\vfill
+%\end{center}
+\label{page:last}%
+}}
+
+
+
+%----------------------------------------------------------------
+% change the enddocument command to write the information about the
+% test to the AUX file
+
+% make a copy of the original enddocument
+\let\origenddocument=\enddocument
+
+% define the new version of enddocument
+\def\enddocument{
+% AUX 
+  \writeval{totalscore}{\thescorecount}%
+  \writeval{totalquestion}{\thequestioncount}%
+  \writeval{lastquestion}{\thequestioncount}%
+  \writeval{totalscratchpages}{\theiscratchpage}%
+% LOG
+  \typeout{***** Total score on the test: \thescorecount}%
+  \typeout{***** Total questions on the test: \thequestioncount}%
+  \typeout{***** Total rough work pages on the test: \theiscratchpage}%
+% call the original enddocument at the end to finish the document
+  \origenddocument%
+}
+
+
+
+
+%----------------------------------------------------------------
+%% Macros for making checkboxes and checklists.
+\newcommand{\cbox}[1]{{\fboxrule.125ex\fboxsep0ex
+   \framebox[2.75ex]{\rule[-.75ex]{0ex}{2.75ex}\smash{#1}}}}
+\newcommand{\cmark}{\raisebox{.0625ex}{$\surd$\kern.125ex}}
+\newcommand{\xmark}{\raisebox{-.1875ex}{\kern.0625ex{X}}}
+\newcommand{\checkbox}{{\sf\cbox{}}}
+\newcommand{\checkedbox}{{\sf\cbox{\cmark}}}
+\newcommand{\markedbox}{{\sf\cbox{\xmark}}}
+\newenvironment{checklist}{\begin{list}{\checkbox}{}}{\end{list}}
+\newcommand{\checkeditem}{\item[\checkedbox]}
+\newcommand{\markeditem}{\item[\markedbox]}
+
+
+%----------------------------------------------------------------
+\newenvironment{titemize}{              %tight itemize
+        \begin{list}{$\bullet$}
+                {
+                 %\addtolength{\leftmargin}{-\labelsep}
+                 %\setlength{\labelwidth}{0pt}
+                 %\addtolength{\labelwidth}{-\labelsep}
+                 \setlength{\leftmargin}{\parindent}
+                 %\setlength{\rightmargin}{0in}
+                 %\setlength{\listparindent}{\parindent}
+                 \setlength{\topsep}{0pt}
+                 \setlength{\parsep}{0in}
+                 \setlength{\itemsep}{0in}
+}
+}{\end{list}}
+
+%\reversemarginpar
+%\setlength{\marginparsep}{-10mm}
+
+%\else
+%\typeout{uoftexam: Package Already Loaded}
+%\fi
+
+%----------------------------------------------------------------
+% Commands for writing and reading values from .aux
+% Based on the \label and \ref from the core
+\makeatletter
+\def\G@valueundefinedtrue{%
+  \gdef\@valueundefined{%
+    \@latex@warning@no@line{There were undefined values}}%
+}
+\let\@valueundefined\relax
+\def\@setvalue#1#2#3{%
+  \ifx#1\relax%
+    \protect\G@valueundefinedtrue%
+    \nfss@text{\reset@font\bfseries ??}%
+    \@latex@warning{Value `#3' on page \thepage \space undefined}%
+  \else%
+    \expandafter#2#1\null%
+  \fi%
+}
+\def\readvalue#1{%
+  \expandafter\@setvalue\csname r@#1\endcsname\@firstoftwo{#1}%
+}
+\def\readvaluepage#1{%
+  \expandafter\@setvalue\csname r@#1\endcsname\@secondoftwo{#1}%
+}
+\def\@newv@alue#1#2#3{%
+  {\global\@namedef{#1@#2}{#3}}%
+}
+\def\newvalue{%
+  \@newv@alue r%
+}
+\def\writevalue#1#2{%
+  \@bsphack%
+  \protected@write\@auxout{}{\string\newvalue{#1}{{#2}{\thepage}}}%
+  \typeout{Value #1\space=\space#2\space written by newquestion}%
+  \@esphack%
+}
+%
+% \writeval write a key-value pair to the .aux file 
+\newcommand{\writeval}[2]{\writevalue{#1}{#2}}
+%
+% \readval reads the last value of a key from the .aux file 
+\newcommand{\readval}[1]{\readvalue{#1}}
+%
+% \readval reads the page of a key from the .aux file 
+\newcommand{\readvalpage}[1]{\readvaluepage{#1}}
+%
+\makeatother
