@@ -1,8 +1,8 @@
 % Title:    LaTeX Style File for UofT Final Exam
 %           University of Toronto, Faculty of Art & Sciences
-% Version: 1.22
+% Version: 1.23
 % Author:  Kaveh Ghasemloo
-% Date:    Nov. 27, 2013
+% Date:    Nov. 29, 2013
 %
 % Licence: 
 % This work is licensed under the 
@@ -15,8 +15,8 @@
 
 %\ifx\uoftexamversion\undefined
 
-\def\uoftexamdate{2013/11/27}
-\def\uoftexamversion{v1.22}
+\def\uoftexamdate{2013/11/29}
+\def\uoftexamversion{v1.23}
 \ProvidesPackage{uoftexam}[\uoftexamdate\space \uoftexamversion\space
 UofT Examination Style]
 \edef\uoftexaminfo{%
@@ -234,21 +234,23 @@ Location on CTAN: ^^J
 %----------------------------------------------------------------
 % new score table
 \newcommand{\newscoretable}[0]{
-\ifthenelse{0<\pageref{page:last}}{
+\ifthenelse{0<\checkvalue{lastquestion}}{
 \begin{tabular}{|c|c@{/}c|}%
 \hline%
 Question \# & Score & Points\\%
 \hline%
   \setcounter{iquestion}{1}%
   \whiledo{\theiquestion<\readval{lastquestion}}{%
-    \ref{question:Q\theiquestion} % 
+    %\ref{question:Q\theiquestion} % 
+    {\theiquestion}
     \ifutx@questionnames%
       \readval{QN\theiquestion}% 
     \fi%
     \tand ~ \tand \readval{Q\theiquestion}\\%
     \stepcounter{iquestion}%
   }%
-    \ref{question:Q\theiquestion} %
+    %\ref{question:Q\theiquestion} %
+    {\theiquestion}%
     \tand ~ \tand \readval{Q\theiquestion}\\
 \hline%
 Total & & \TotalScore{}\\%
@@ -264,7 +266,7 @@ Total & & \TotalScore{}\\%
 
 \newcommand{\questiontable}[0]{%
 {\small%
-\ifthenelse{0<\readval{lastquestion}}{
+\ifthenelse{0<\checkvalue{lastquestion}}{
 \begin{tabular}{|*{\readval{lastquestion}}{c|}}
 \hline
   \setcounter{iquestion}{1}%
@@ -459,6 +461,7 @@ to the attention of an invigilator.
 
 %----------------------------------------------------------------
 \newcommand{\toppage}{%
+\addcontentsline{toc}{section}{Top Page}%
 \ifutx@lecturenote%
 \LectureTopPage%
 \else%
@@ -635,6 +638,7 @@ Last Name: \hspace{.31in} \hrulefill\ \hspace{.4in}\\
 %----------------------------------------------------------------
 % marking page
 \newcommand{\markingpage}{{
+\addcontentsline{toc}{section}{Marking Page}%
 PLEASE PRINT YOUR STUDENT NUMBER AND YOUR NAME \\
 
 Student Number: \studentnumberboxes \\
@@ -673,7 +677,8 @@ Do NOT use it for answering or as scratch paper.\\
 % add one to the question counter
 %\addtocounter{questioncount}{1}%
 \refstepcounter{questioncount}%
-\label{question:Q\thequestioncount}
+\label{question:Q\thequestioncount}%
+\addcontentsline{toc}{section}{Question \thequestioncount}%
 %
 % set the question part number to zero.
 \setcounter{questioncountpart}{0}%
@@ -791,6 +796,9 @@ Do NOT use it for answering or as scratch paper.\\
 \ifnum\@enumdepth = 2%
 %
 \addtocounter{questioncountpart}{1}%
+%\refstepcounter{questioncountpart}%
+%\addcontentsline{toc}{subsection}%
+%{Question \alph{thequestioncountpart}}%
 %
 \ifutx@solutions%
 \item [\alph{questioncountpart}.]{\bf }%
@@ -1170,26 +1178,51 @@ Continue your solution here.
     \@latex@warning@no@line{There were undefined values}}%
 }
 \let\@valueundefined\relax
+\def\@checkvalue#1{%
+\ifx#1\relax%
+0%
+\else%
+1%
+\fi%
+}
+\def\checkvalue#1{%
+\expandafter\@checkvalue\csname v@#1\endcsname%
+}
 \def\@setvalue#1#2#3{%
   \ifx#1\relax%
-    \protect\G@valueundefinedtrue%
     \nfss@text{\reset@font\bfseries ??}%
+    \protect\G@valueundefinedtrue%
     \@latex@warning{Value `#3' on page \thepage \space undefined}%
   \else%
     \expandafter#2#1\null%
   \fi%
 }
 \def\readvalue#1{%
-  \expandafter\@setvalue\csname r@#1\endcsname\@firstoftwo{#1}%
+  \expandafter\@setvalue\csname v@#1\endcsname\@firstoftwo{#1}%
 }
 \def\readvaluepage#1{%
-  \expandafter\@setvalue\csname r@#1\endcsname\@secondoftwo{#1}%
+  \expandafter\@setvalue\csname v@#1\endcsname\@secondoftwo{#1}%
+}
+\def\@setnumvalue#1#2#3{%
+  \ifx#1\relax%
+    0%
+    \protect\G@valueundefinedtrue%
+    \@latex@warning{Value `#3' on page \thepage \space undefined}%
+  \else%
+    \expandafter#2#1\null%
+  \fi%
+}
+\def\readnumvalue#1{%
+  \expandafter\@setnumvalue\csname v@#1\endcsname\@firstoftwo{#1}%
+}
+\def\readnumvaluepage#1{%
+  \expandafter\@setnumvalue\csname v@#1\endcsname\@secondoftwo{#1}%
 }
 \def\@newv@alue#1#2#3{%
   {\global\@namedef{#1@#2}{#3}}%
 }
 \def\newvalue{%
-  \@newv@alue r%
+  \@newv@alue v%
 }
 \def\writevalue#1#2{%
   \@bsphack%
@@ -1206,5 +1239,11 @@ Continue your solution here.
 %
 % \readval reads the page of a key from the .aux file 
 \newcommand{\readvalpage}[1]{\readvaluepage{#1}}
+%
+% \readval reads the last value of a key from the .aux file 
+\newcommand{\readnumval}[1]{\readnumvalue{#1}}
+%
+% \readval reads the page of a key from the .aux file 
+\newcommand{\readnumvalpage}[1]{\readnumvaluepage{#1}}
 %
 \makeatother
