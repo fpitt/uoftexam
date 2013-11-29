@@ -1,0 +1,159 @@
+% Title:    UofT Final Exam Sample 2
+%           University of Toronto, Faculty of Art & Sciences
+% Version: 1.02
+% Author:  Kaveh Ghasemloo
+% Date:    Nov. 27, 2013
+%
+% Licence: 
+% This work is licensed under the 
+% Creative Commons Attribution-ShareAlike 3.0 Unported License. 
+% To view a copy of this license, visit 
+%   http://creativecommons.org/licenses/by-sa/3.0/ 
+% or send a letter to 
+%   Creative Commons, 444 Castro Street, Suite 900, 
+%   Mountain View, California, 94041, USA.
+
+\documentclass[12pt,twoside]{article}
+
+\usepackage[exam,writeon]{uoftexam}
+% useful options are: 
+%   exam:         exam paper, no space for student answers
+%   exam,writeon: exam paper, with space for student answers
+%   questions:    only questions
+%   solutions:    questions and solutions
+
+
+%----------------------------------------------------------------
+% Exam Info
+\InstitutionName{UNIVERSITY OF TORONTO}
+\FacultyName{Faculty of Arts and Science}
+\DepartmentName{Department of Computer Science}
+
+\CourseTitle{CSC463H1}
+\CourseCode{CSC463H1}
+\CourseSection{L1}
+\CourseSemester{Winter 2012}
+\CourseSemesterCode{S} % F for Fall, S for Spring
+\CourseInstructor{Kaveh Ghasemloo}
+
+\Date{April 2012}
+\Title{EXAMINATIONS}
+
+\ExamDuration{3 hours}
+\ExamAids{No Aids Allowed}
+
+
+\ExamInstructions{
+There are \QuestionCount~questions worth a total of \TotalScore~points. 
+To pass this course you should get {\bf at least 50\% of this final exam}.
+Answer all questions on the question paper. 
+Please read all questions right now and 
+ask any clarification questions you have during the first 60 minutes 
+to minimize distractions to other students.
+{\bf Check that your exam book has  \pageref{page:last} pages}
+(including this cover page). Please bring any discrepancy
+to the attention of an invigilator.
+}
+
+\generalnotes{NOTES}{
+SOME NOTES
+}
+
+
+\begin{document}
+%----------------------------------------------------------------
+% The top and marking pages
+\toppage
+
+
+%----------------------------------------------------------------
+% Questions Begin
+\begin{enumerate}
+
+
+%----------------------------------------------------------------
+% Question 1
+\newquestion{10}{
+Some Text.
+}
+
+\newanswerpage
+
+
+%----------------------------------------------------------------
+% Question 2
+\newquestion{20}{
+Some Text.
+
+\begin{enumerate}
+\newquestionpart{5}{
+Part a?
+}
+
+\newquestionpart{5}{
+Part b?
+}
+
+\newquestionpage
+
+
+\newquestionpart{5}{
+Part c?
+}
+
+\end{enumerate}
+}
+
+
+%----------------------------------------------------------------
+% Question 3
+\newquestion{(+10)}{
+Some Text.
+}
+
+\newsolution{
+Solution
+}
+
+%----------------------------------------------------------------
+% Question 4
+\newquestion{}{
+Some Text.
+
+\solution{
+Solution
+}
+\begin{enumerate}
+\newquestionpart{5}{
+Part a?
+}
+
+\newquestionpart{[B]}{
+Part b?
+}
+
+\newsolution{
+Solution
+}
+
+\end{enumerate}
+
+}
+
+\newsolution{
+Solution
+}
+
+
+%----------------------------------------------------------------
+% Questions End
+\end{enumerate}
+
+
+%----------------------------------------------------------------
+% The bottom page
+\bottompage
+
+
+\end{document}
+
